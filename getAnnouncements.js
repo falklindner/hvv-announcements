@@ -62,14 +62,35 @@ function broadcast() {
   announcements = getAnnouncements()
   announcements.forEach((announcement, index) => {
     id = announcement.id
-    summary = announcement.summary
-    mail_body = transformText(announcement.description)
     if (isAnnouncementNew(id)) {
-      console.log(`Announcement ${id}: Summary: ${summary}.\\n Description: ${mail_body}`);
-      GmailApp.sendEmail(to_list,
-                         `HVV Announcement ${id}`, 
-                         `Summary: ${summary}. The following rides are cancelled:\n${mail_body}`,
-                         mail_options)
+      summary = announcement.summary
+      htmlText = createHTMLTable(announcement.description)
+      console.log(`Announcement ${id}: Summary: ${summary}.\\n Description: ${announcement.description}`);
+      if (htmlText !== announcement.description) {
+        console.log("HTML transform successful")
+        mail_options = {  from: 'hvv.announcements@gmail.com',
+                          name: 'HVV Announcements', 
+                          bcc: bcc_list, 
+                          htmlBody: htmlText
+                        }
+        GmailApp.sendEmail(to_list,
+                    `HVV Announcement ${id}`, //subject
+                    "",                       //empty body
+                    mail_options)             //body specified as adv option
+      }
+      else {
+        console.log("HTML transform not successful. Sending legacy transform.")
+        mail_options = { from: 'hvv.announcements@gmail.com',
+                         name: 'HVV Announcements', 
+                         bcc: bcc_list
+                         }
+        mail_body = transformText(announcement.description)
+        GmailApp.sendEmail(to_list,
+                    `HVV Announcement ${id}`,                                                 //subject
+                    `Summary: ${summary}. The following rides are cancelled:\n${mail_body}`,  //non-HTML body
+                    mail_options
+                    )
+      }
     }
     else {
       console.log("Announcement exists already")
