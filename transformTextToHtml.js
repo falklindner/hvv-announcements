@@ -1,7 +1,5 @@
-//let message1 = "Betriebsbedingt entfallen heute 23.11.2023 die Abfahrten der Linie 64 um 15:02+15:32+16:02+16:32+17:02+17:32+18:02 Uhr ab Finkenwerder, sowie ab Teufelsbrück um 15:20+15:50+16:20+16:50+17:20+17:50 Uhr. "
-//let message2 = "Am 22.11.2023 entfallen die Abfahrten der Linie 64 um 15:02+15:32+16:02+16:32+17:02+17:32+18:02 Uhr ab Finkenwerder, sowie ab Teufelsbrück um 15:20+15:50+16:20+16:50+17:20+17:50 Uhr. "
-
-
+let message1 = "Betriebsbedingt entfallen heute 23.11.2023 die Abfahrten der Linie 64 um 15:02+15:32+16:02+16:32+17:02+17:32+18:02 Uhr ab Finkenwerder, sowie ab Teufelsbrück um 15:20+15:50+16:20+16:50+17:20+17:50 Uhr. "
+let message2 = "Am 22.11.2023 entfallen die Abfahrten der Linie 64 um 15:02+15:32+16:02+16:32+17:02+17:32+18:02 Uhr ab Finkenwerder, sowie ab Teufelsbrück um 15:20+15:50+16:20+16:50+17:20+17:50 Uhr. "
 function createHTMLTable(text) {
   // Extrahieren Sie die Zeiten für Finkenwerder und Teufelsbrück
   const keyword = "entfallen"
@@ -16,9 +14,8 @@ function createHTMLTable(text) {
     var tbTimes = tbPart.match(/[\d:]+/g) || [];
 
     // Erstellen Sie eine HTML-Tabelle
-    var body = "<p>Today, on <b>" + dateMatch + "</b>, the following ferry schedules are <b>NOT SERVICED</b>: </p>"
-    var table = "<table style='width:40%' border=1>";
-    table += "<tr><th>Date</th><th>RPF<br>&#8595;<br>TBF</th><th>TBF<br>&#8595;<br>RPF</th></tr>";
+    var table = "<table style='width:20%' border=1>";
+    table += "<tr><th>TBF<br>&#8595;<br>RPF</th><th>RPF<br>&#8595;<br>TBF</th></tr>";
     for (var i = 0; i < Math.max(fwTimes.length, tbTimes.length); i++) {
       // Add Rüschpark times
       var timeParts = fwTimes[i].split(':');
@@ -28,17 +25,21 @@ function createHTMLTable(text) {
       date.setMinutes(date.getMinutes() + 5); // Add 5 minutes
       var newTime = ("0" + date.getHours()).slice(-2) + ":" + ("0" + date.getMinutes()).slice(-2); // Add leading zero to hours and minutes
       table += "<tr>";
-      table += "<td align='center'>" + dateMatch +"</td>";
       
-      table += "<td align='center' >" + newTime + "</td>";
       table += "<td align='center'>" + (tbTimes[i] || "") + "</td>";
-
+      table += "<td align='center' >" + newTime + "</td>";
+      
+      
       table += "</tr>";
     }
     table += "</table>";
-    body +=table
-  return body
+    var text = "<p>Today, on <b>" + dateMatch + "</b>, the following ferry schedules are NOT serviced: </p>" 
+
+
+    // Fügen Sie die Tabelle zum Dokument hinzu
+    document.body.innerHTML += text
+    document.body.innerHTML += table;
   }
-  console.log("Keyword not found")
-  return text
 }
+
+createHTMLTable(message1)
